@@ -1,13 +1,15 @@
 package com.desafio1.client.services;
 
+import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.desafio1.client.dto.ClientDTO;
 import com.desafio1.client.entities.Client;
 import com.desafio1.client.repositories.ClientRepository;
 
@@ -18,9 +20,10 @@ public class ClientService {
 	private ClientRepository repository;
 	
 	@Transactional(readOnly = true)
-	public List<Client> findAll(){
-		return repository.findAll();
+	public List<ClientDTO> findAll(){
+		List<Client> list =  repository.findAll();
 		
-	}
+		return list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());		
+		}
 
 }
