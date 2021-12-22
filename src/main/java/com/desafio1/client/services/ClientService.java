@@ -3,7 +3,8 @@ package com.desafio1.client.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.desafio1.client.dto.ClientDTO;
 import com.desafio1.client.entities.Client;
 import com.desafio1.client.repositories.ClientRepository;
-import com.desafio1.client.services.exceptions.EntityNotFoundException;
+import com.desafio1.client.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ClientService {
@@ -47,4 +48,20 @@ public class ClientService {
 		
 		}
 
+	@Transactional
+	public ClientDTO update(Long id,ClientDTO dto) {
+		try {
+		Client entity = repository.getOne(id);
+		entity.setName(dto.getName());
+		entity.setCpf(dto.getCpf());
+		entity.setIncome(dto.getIncome());
+		entity.setBirthDate(dto.getBirthDate());
+		entity.setChildren(dto.getChildren());
+		entity = repository.save(entity);
+		return new ClientDTO(entity);
+		}
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}		
+	}
 }
